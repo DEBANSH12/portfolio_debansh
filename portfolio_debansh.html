@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Debansh Panda — /home/debansh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0d1117;
+    --panel:#12181f;
+    --panel-2:#161d26;
+    --line:#232b36;
+    --text:#dfe6ee;
+    --muted:#7b8899;
+    --amber:#e3b341;
+    --cyan:#56d4dd;
+    --green:#7ee787;
+    --mono:'JetBrains Mono', monospace;
+    --sans:'IBM Plex Sans', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(86,212,221,0.05), transparent 40%),
+      radial-gradient(circle at 85% 30%, rgba(227,179,65,0.05), transparent 40%);
+  }
+  a{color:var(--cyan); text-decoration:none;}
+  ::selection{background:var(--amber); color:#0d1117;}
+
+  /* ---- top bar (mimics OS window chrome) ---- */
+  .titlebar{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; gap:10px;
+    background:var(--panel); border-bottom:1px solid var(--line);
+    padding:10px 18px;
+  }
+  .dots{display:flex; gap:6px;}
+  .dot{width:11px; height:11px; border-radius:50%;}
+  .dot.r{background:#ff5f56;} .dot.y{background:#ffbd2e;} .dot.g{background:#27c93f;}
+  .titlebar .path{
+    font-family:var(--mono); font-size:12.5px; color:var(--muted);
+    margin-left:6px;
+  }
+  .titlebar nav{margin-left:auto; display:flex; gap:18px;}
+  .titlebar nav a{
+    font-family:var(--mono); font-size:12.5px; color:var(--muted);
+    padding:4px 2px; border-bottom:2px solid transparent;
+  }
+  .titlebar nav a:hover, .titlebar nav a.active{color:var(--cyan); border-color:var(--cyan);}
+  .titlebar nav{display:none;}
+  @media(min-width:760px){ .titlebar nav{display:flex;} }
+
+  section{padding:64px 20px; max-width:920px; margin:0 auto;}
+  .eyebrow{
+    font-family:var(--mono); font-size:12.5px; color:var(--amber);
+    display:flex; align-items:center; gap:8px; margin-bottom:14px; letter-spacing:.02em;
+  }
+  .eyebrow::before{content:"$"; color:var(--muted);}
+  h2{font-family:var(--mono); font-size:22px; color:var(--text); margin-bottom:28px; font-weight:700;}
+  h2 .sym{color:var(--cyan);}
+
+  /* ---- hero / boot sequence ---- */
+  .hero{
+    padding:80px 20px 60px; max-width:920px; margin:0 auto;
+  }
+  .boot{
+    font-family:var(--mono); font-size:13px; color:var(--muted);
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:18px 20px; margin-bottom:34px; min-height:150px;
+  }
+  .boot .ln{margin-bottom:4px; opacity:0; animation:fade .3s forwards;}
+  .boot .ok{color:var(--green);}
+  .boot .warn{color:var(--amber);}
+  .cursor{display:inline-block; width:8px; height:14px; background:var(--cyan); animation:blink 1s step-end infinite; vertical-align:middle;}
+  @keyframes blink{50%{opacity:0;}}
+  @keyframes fade{to{opacity:1;}}
+
+  .hero h1{
+    font-family:var(--mono); font-weight:800; font-size:clamp(30px,5.5vw,52px);
+    line-height:1.15; margin-bottom:12px;
+  }
+  .hero h1 .accent{color:var(--cyan);}
+  .hero p.tag{color:var(--muted); font-size:16.5px; max-width:60ch; margin-bottom:26px;}
+  .hero .cta{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn{
+    font-family:var(--mono); font-size:13px; padding:10px 18px; border-radius:6px;
+    border:1px solid var(--line); background:var(--panel-2); color:var(--text);
+    transition:.15s;
+  }
+  .btn:hover{border-color:var(--cyan); color:var(--cyan);}
+  .btn.primary{background:var(--cyan); color:#0d1117; border-color:var(--cyan); font-weight:600;}
+  .btn.primary:hover{background:#78e0e6;}
+
+  /* ---- about / education ---- */
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:22px 24px;
+  }
+  .edu-row{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:baseline;}
+  .edu-row .school{font-weight:600; font-size:16.5px;}
+  .edu-row .years{font-family:var(--mono); color:var(--muted); font-size:12.5px;}
+  .edu-row .degree{color:var(--muted); margin-top:4px;}
+  .gpa{
+    display:inline-block; margin-top:12px; font-family:var(--mono); font-size:12.5px;
+    color:var(--amber); border:1px solid var(--line); padding:3px 9px; border-radius:4px;
+  }
+
+  /* ---- skills tree ---- */
+  .tree{font-family:var(--mono); font-size:14px;}
+  .tree-node{margin-bottom:16px;}
+  .tree-node .label{color:var(--cyan); margin-bottom:6px; display:flex; gap:8px; align-items:center;}
+  .tree-node .label::before{content:"├──"; color:var(--muted);}
+  .tree-node:last-child .label::before{content:"└──";}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; padding-left:26px;}
+  .chip{
+    font-family:var(--sans); font-size:13px; color:var(--text);
+    background:var(--panel-2); border:1px solid var(--line); padding:5px 11px; border-radius:5px;
+  }
+
+  /* ---- experience ---- */
+  .exp-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:22px 24px; position:relative;
+  }
+  .exp-head{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:10px;}
+  .exp-head .role{font-weight:600; font-size:16px;}
+  .exp-head .org{color:var(--muted); font-size:13.5px; margin-top:2px;}
+  .exp-head .when{font-family:var(--mono); font-size:12px; color:var(--amber); white-space:nowrap;}
+  ul.bullets{padding-left:20px;}
+  ul.bullets li{margin-bottom:8px; color:var(--text); font-size:14.5px;}
+  ul.bullets li::marker{color:var(--cyan);}
+
+  /* ---- projects tabs ---- */
+  .tabbar{display:flex; gap:2px; border-bottom:1px solid var(--line); margin-bottom:0; overflow-x:auto;}
+  .tab{
+    font-family:var(--mono); font-size:12.5px; padding:10px 16px; background:var(--panel);
+    border:1px solid var(--line); border-bottom:none; border-radius:8px 8px 0 0; color:var(--muted);
+    cursor:pointer; white-space:nowrap;
+  }
+  .tab.active{color:var(--cyan); background:var(--panel-2);}
+  .tabpanel{
+    display:none; background:var(--panel-2); border:1px solid var(--line); border-top:none;
+    border-radius:0 0 8px 8px; padding:24px;
+  }
+  .tabpanel.active{display:block;}
+  .proj-title{font-weight:700; font-size:17px; margin-bottom:4px;}
+  .proj-year{font-family:var(--mono); font-size:12px; color:var(--amber); margin-bottom:14px; display:block;}
+  .stack{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+  .stack span{
+    font-family:var(--mono); font-size:11.5px; color:var(--cyan); border:1px solid var(--line);
+    padding:3px 8px; border-radius:4px;
+  }
+
+  /* ---- achievements / certs grid ---- */
+  .grid2{display:grid; grid-template-columns:1fr; gap:16px;}
+  @media(min-width:680px){ .grid2{grid-template-columns:1fr 1fr;} }
+  .mini-card{background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px;}
+  .mini-card .k{font-family:var(--mono); color:var(--amber); font-size:11.5px; margin-bottom:8px; text-transform:uppercase; letter-spacing:.04em;}
+  .mini-card li{list-style:none; font-size:14px; margin-bottom:8px; padding-left:16px; position:relative;}
+  .mini-card li::before{content:"▸"; color:var(--cyan); position:absolute; left:0;}
+
+  /* ---- contact / footer ---- */
+  footer{
+    border-top:1px solid var(--line); padding:40px 20px 60px; text-align:center;
+  }
+  footer .prompt{font-family:var(--mono); color:var(--muted); font-size:13px; margin-bottom:18px;}
+  .contact-links{display:flex; gap:22px; justify-content:center; flex-wrap:wrap; font-family:var(--mono); font-size:13.5px;}
+  .contact-links a{color:var(--text); border-bottom:1px solid var(--line); padding-bottom:2px;}
+  .contact-links a:hover{color:var(--cyan); border-color:var(--cyan);}
+
+  @media (prefers-reduced-motion: reduce){
+    .cursor{animation:none;}
+    .boot .ln{opacity:1; animation:none;}
+    html{scroll-behavior:auto;}
+  }
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px;}
+</style>
+</head>
+<body>
+
+<div class="titlebar">
+  <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+  <div class="path">debansh@portfolio: ~</div>
+  <nav>
+    <a href="#about">about</a>
+    <a href="#skills">skills</a>
+    <a href="#experience">experience</a>
+    <a href="#projects">projects</a>
+    <a href="#more">achievements</a>
+    <a href="#contact">contact</a>
+  </nav>
+</div>
+
+<section class="hero">
+  <div class="boot" id="boot"></div>
+  <h1>Debansh Panda<br><span class="accent">// systems &amp; software engineer</span></h1>
+  <p class="tag">CS undergrad building at the intersection of backend systems, DevOps automation, and applied ML — currently fine-tuning models for low-resource languages and scripting away manual ops work.</p>
+  <div class="cta">
+    <a class="btn primary" href="#projects">view projects</a>
+    <a class="btn" href="mailto:pandadebansh@gmail.com">get in touch</a>
+    <a class="btn" href="tel:+919337304545">+91 93373 04545</a>
+  </div>
+</section>
+
+<section id="about">
+  <div class="eyebrow">cat education.log</div>
+  <h2><span class="sym">#</span> Education</h2>
+  <div class="card">
+    <div class="edu-row">
+      <div>
+        <div class="school">Siksha 'O' Anusandhan, ITER — Bhubaneswar, Odisha</div>
+        <div class="degree">Bachelor of Technology, Computer Science &amp; Engineering</div>
+      </div>
+      <div class="years">Nov 2022 — 2026</div>
+    </div>
+    <span class="gpa">CGPA 7.45</span>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="eyebrow">tree ./skills</div>
+  <h2><span class="sym">#</span> Skills &amp; Proficiencies</h2>
+  <div class="tree">
+    <div class="tree-node">
+      <div class="label">languages</div>
+      <div class="chips"><span class="chip">Java</span><span class="chip">Python</span><span class="chip">SQL</span><span class="chip">Bash</span></div>
+    </div>
+    <div class="tree-node">
+      <div class="label">frontend / backend</div>
+      <div class="chips"><span class="chip">React</span><span class="chip">HTML</span><span class="chip">CSS</span><span class="chip">Bootstrap</span><span class="chip">Spring Boot</span></div>
+    </div>
+    <div class="tree-node">
+      <div class="label">infra &amp; cloud</div>
+      <div class="chips"><span class="chip">Docker</span><span class="chip">AWS Cloud Fundamentals</span><span class="chip">Terraform</span><span class="chip">CI/CD</span><span class="chip">REST APIs</span><span class="chip">Microservices</span><span class="chip">Git/GitHub</span></div>
+    </div>
+    <div class="tree-node">
+      <div class="label">databases</div>
+      <div class="chips"><span class="chip">PostgreSQL</span><span class="chip">MongoDB</span><span class="chip">MySQL</span><span class="chip">Schema Design</span><span class="chip">Indexing</span><span class="chip">Normalization</span></div>
+    </div>
+    <div class="tree-node">
+      <div class="label">data &amp; analytics</div>
+      <div class="chips"><span class="chip">TensorFlow</span><span class="chip">Pandas</span><span class="chip">NumPy</span><span class="chip">Power BI</span><span class="chip">Tableau</span><span class="chip">Data Modeling</span></div>
+    </div>
+    <div class="tree-node">
+      <div class="label">networking &amp; security</div>
+      <div class="chips"><span class="chip">TCP/IP</span><span class="chip">HTTP</span><span class="chip">DNS</span><span class="chip">Web Security</span><span class="chip">Log Analysis</span><span class="chip">Linux/Windows Internals</span></div>
+    </div>
+    <div class="tree-node">
+      <div class="label">cs fundamentals</div>
+      <div class="chips"><span class="chip">DSA</span><span class="chip">OS</span><span class="chip">CN</span><span class="chip">DBMS</span><span class="chip">OOPs</span><span class="chip">Multithreading</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="eyebrow">tail -f experience.log</div>
+  <h2><span class="sym">#</span> Work Experience</h2>
+  <div class="exp-card">
+    <div class="exp-head">
+      <div>
+        <div class="role">Content Curator Intern (Remote)</div>
+        <div class="org">BetterLearning.ai — a product of Modal Technologies Pvt. Ltd. · Sambalpur, Odisha</div>
+      </div>
+      <div class="when">Jun 2026 — Jul 2026</div>
+    </div>
+    <ul class="bullets">
+      <li>Collaborated within an Agile framework to develop, review, and frame technical and academic content for the BetterLearning.ai platform.</li>
+      <li>Structured and standardized large-scale content assets, ensuring consistency and reliability across 8+ platform modules.</li>
+      <li>Validated technical datasets and educational assets, reducing errors by 50% across all modules.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="eyebrow">ls -la ./projects</div>
+  <h2><span class="sym">#</span> Projects</h2>
+  <div class="tabbar">
+    <div class="tab active" data-tab="p1">system-maintenance-suite/</div>
+    <div class="tab" data-tab="p2">odia-agri-ner/</div>
+  </div>
+  <div class="tabpanel active" id="p1">
+    <span class="proj-title">System Maintenance Automation Suite</span>
+    <span class="proj-year">2026</span>
+    <ul class="bullets">
+      <li>Architected a Linux automation suite using Bash shell scripts to execute automated .tar.gz data backups, package updates, and system cleanups — reducing manual system maintenance time by over 70%.</li>
+      <li>Engineered an error-handling and testing framework, achieving a 60% reduction in manual QA effort.</li>
+      <li>Configured Cron-based scheduling and Git version control for automated script deployment within a standard SDLC workflow.</li>
+    </ul>
+    <div class="stack"><span>Bash</span><span>Cron</span><span>Git</span><span>Shell Scripting</span><span>Linux Internals</span><span>SDLC</span></div>
+  </div>
+  <div class="tabpanel" id="p2">
+    <span class="proj-title">Domain-Aware Named Entity Recognition for Agricultural Query Processing</span>
+    <span class="proj-year">2026 · AI/NLP, Low-Resource Odia Language</span>
+    <ul class="bullets">
+      <li>Fine-tuned XLM-RoBERTa for domain-specific entity extraction, achieving 90.8% F1-score and 97.3% accuracy.</li>
+      <li>Built a custom 17K+ annotated BIO-tagged dataset and data pipeline for model training.</li>
+      <li>Integrated a knowledge-base mapping layer for structured end-user query resolution.</li>
+    </ul>
+    <div class="stack"><span>Python</span><span>XLM-RoBERTa</span><span>Pandas</span><span>NumPy</span><span>Scikit-Learn</span><span>Google Colab</span></div>
+  </div>
+</section>
+
+<section id="more">
+  <div class="eyebrow">grep -r "achievements" ./records</div>
+  <h2><span class="sym">#</span> Achievements &amp; Certifications</h2>
+  <div class="grid2">
+    <div class="mini-card">
+      <div class="k">Achievements</div>
+      <ul>
+        <li>Ranked within the top 10% of 1,000+ candidates in the SOA ITER DevOps Internals Training Program.</li>
+        <li>Secured Grade 'A' in the MyAnatomy National Competence &amp; Employability Test, ranking among top performers nationally.</li>
+      </ul>
+    </div>
+    <div class="mini-card">
+      <div class="k">Certifications</div>
+      <ul>
+        <li>DevOps Internals — Certified by ITER, SOA University</li>
+        <li>HackerRank: Java Basic Certification</li>
+        <li>The Complete 2024 Web Development Bootcamp by Dr. Angela Yu — Udemy</li>
+        <li>Deloitte Data Analytics Job Simulation — Forage</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="prompt">debansh@portfolio ~ % echo $CONTACT</div>
+  <div class="contact-links">
+    <a href="mailto:pandadebansh@gmail.com">pandadebansh@gmail.com</a>
+    <a href="tel:+919337304545">+91 93373 04545</a>
+    <a href="https://www.linkedin.com/in/debansh-panda-86645327a/" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="https://github.com/DEBANSH12" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</footer>
+
+<script>
+  // boot sequence typing
+  const lines = [
+    { text: "$ whoami", cls: "" },
+    { text: "debansh panda — computer science & engineering", cls: "" },
+    { text: "$ status --check", cls: "" },
+    { text: "[OK] education .......... B.Tech CSE, SOA ITER (2022–2026)", cls: "ok" },
+    { text: "[OK] experience ......... content curator intern @ betterlearning.ai", cls: "ok" },
+    { text: "[OK] projects ........... 2 loaded (automation-suite, odia-ner)", cls: "ok" },
+    { text: "[WARN] coffee_level ..... low, send opportunities", cls: "warn" },
+    { text: "$ ready for deployment_", cls: "" },
+  ];
+  const boot = document.getElementById('boot');
+  lines.forEach((l, i) => {
+    const div = document.createElement('div');
+    div.className = 'ln ' + l.cls;
+    div.style.animationDelay = (i * 0.18) + 's';
+    div.textContent = l.text;
+    boot.appendChild(div);
+  });
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  boot.lastElementChild.appendChild(cursor);
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tabpanel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  // active nav link on scroll
+  const navLinks = document.querySelectorAll('.titlebar nav a');
+  const sections = [...navLinks].map(a => document.querySelector(a.getAttribute('href')));
+  window.addEventListener('scroll', () => {
+    let idx = 0;
+    sections.forEach((s, i) => { if (s && window.scrollY >= s.offsetTop - 100) idx = i; });
+    navLinks.forEach(a => a.classList.remove('active'));
+    if (navLinks[idx]) navLinks[idx].classList.add('active');
+  });
+</script>
+
+</body>
+</html>
